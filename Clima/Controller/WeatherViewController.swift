@@ -8,7 +8,9 @@
 
 import UIKit
 
-class WeatherViewController: UIViewController, UITextFieldDelegate {
+
+class WeatherViewController: UIViewController, UITextFieldDelegate, WeatherDelegateManager {
+    
     
     //MARK: - Attributes
 
@@ -21,7 +23,7 @@ class WeatherViewController: UIViewController, UITextFieldDelegate {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        weatherManager.delegate = self
         searchTextField.delegate = self
     }
     
@@ -49,6 +51,10 @@ class WeatherViewController: UIViewController, UITextFieldDelegate {
         if let city = searchTextField.text {
             weatherManager.fetchWeather(cityName: city)
         }
+    }
+    
+    func didUpdateWather(weather: WeatherModel) {
+        print(weather.temperatureString)
     }
 }
 
