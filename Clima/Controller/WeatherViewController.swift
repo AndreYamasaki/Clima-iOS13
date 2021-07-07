@@ -11,7 +11,6 @@ import UIKit
 
 class WeatherViewController: UIViewController, UITextFieldDelegate, WeatherDelegateManager {
     
-    
     //MARK: - Attributes
 
     @IBOutlet weak var conditionImageView: UIImageView!
@@ -53,8 +52,12 @@ class WeatherViewController: UIViewController, UITextFieldDelegate, WeatherDeleg
         }
     }
     
-    func didUpdateWather(weather: WeatherModel) {
+    func didUpdateWather(_ weatherManager: WeatherManager, weather: WeatherModel) {
         print(weather.temperatureString)
+    }
+    
+    func didFailwithError(error: Error) {
+        print(error.localizedDescription)
     }
 }
 

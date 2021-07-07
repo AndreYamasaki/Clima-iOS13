@@ -9,7 +9,8 @@
 import Foundation
 
 protocol WeatherDelegateManager {
-    func didUpdateWather(weather: WeatherModel)
+    func didUpdateWather(_ weatherManager: WeatherManager,weather: WeatherModel)
+    func didFailwithError(error: Error)
 }
 
 struct WeatherManager {
@@ -19,21 +20,21 @@ struct WeatherManager {
     
     func fetchWeather (cityName: String) {
         let urlString = "https://api.openweathermap.org/data/2.5/weather?appid=e81d3fd189316a811485a4b9a6bdcda7&unit=metric&q=\(cityName)"
-        performRequest(urlString: urlString)
+        performRequest(with: urlString)
     }
     
-    func performRequest(urlString: String) {
+    func performRequest(with urlString: String) {
         if let url = URL(string: urlString) {
             let session = URLSession(configuration: .default)
             let task = session.dataTask(with: url) { data, response, error in
                 if error != nil {
-                    print(error!)
+                    self.delegate?.didFailwithError(error: error!)
                     return
                 }
                 if let safeData = data {
                     //                    let dataString = String(data: safeData, encoding: .utf8)
-                    if let weather = self.parseJSON(weatherData: safeData) {
-                        self.delegate?.didUpdateWather(weather: weather)
+                    if let weather = self.parseJSON(safeData) {
+                        self.delegate?.didUpdateWather(self, weather: weather)
                     }
                 }
             }
@@ -41,7 +42,7 @@ struct WeatherManager {
         }
     }
     
-    func parseJSON(weatherData: Data) -> WeatherModel? {
+    func parseJSON(_ weatherData: Data) -> WeatherModel? {
         let decoder = JSONDecoder()
         do{
             let decodedData = try decoder.decode(WeatherData.self, from: weatherData)
@@ -51,7 +52,7 @@ struct WeatherManager {
             let weather = WeatherModel(conditionId: id, cityName: name, temperature: temp)
             return weather
         } catch {
-            print(error.localizedDescription)
+            self.delegate?.didFailwithError(error: error)
             return nil
         }
     }
