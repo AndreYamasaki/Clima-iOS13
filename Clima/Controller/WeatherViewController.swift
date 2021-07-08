@@ -9,7 +9,7 @@
 import UIKit
 
 
-class WeatherViewController: UIViewController, UITextFieldDelegate, WeatherDelegateManager {
+class WeatherViewController: UIViewController {
     
     //MARK: - Attributes
 
@@ -25,8 +25,10 @@ class WeatherViewController: UIViewController, UITextFieldDelegate, WeatherDeleg
         weatherManager.delegate = self
         searchTextField.delegate = self
     }
-    
-    //MARK: - UITextField Data Source
+}
+
+//MARK: - UITextFieldDelegate
+extension WeatherViewController: UITextFieldDelegate {
 
     @IBAction func searchPressed(_ sender: UIButton) {
         searchTextField.endEditing(true)
@@ -51,6 +53,10 @@ class WeatherViewController: UIViewController, UITextFieldDelegate, WeatherDeleg
             weatherManager.fetchWeather(cityName: city)
         }
     }
+}
+
+//MARK: - WeatherManagerDelegate
+extension WeatherViewController: WeatherDelegateManager {
     
     func didUpdateWather(_ weatherManager: WeatherManager, weather: WeatherModel) {
         DispatchQueue.main.async {
